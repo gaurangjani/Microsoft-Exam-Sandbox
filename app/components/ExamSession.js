@@ -154,14 +154,19 @@ export default function ExamSession({ exam, onComplete, onError }) {
       return;
     }
 
-    const subset = questions.slice(0, upTo);
-    const answerArray = subset.map((_, idx) => answers[idx] || []);
-    const result = calculateScore(answerArray, subset);
+    try {
+      const subset = questions.slice(0, upTo);
+      const answerArray = questions.slice(0, upTo).map((_, idx) => answers[idx] || []);
+      const result = calculateScore(answerArray, subset);
 
-    setQuestions(subset);
-    setScore(result);
-    setSubmitted(true);
-    onComplete({ exam, result, questions: subset, answers: answerArray });
+      setQuestions(subset);
+      setScore(result);
+      setSubmitted(true);
+      onComplete({ exam, result, questions: subset, answers: answerArray });
+    } catch (error) {
+      console.error('Error in handleEndEarly:', error);
+      alert('An error occurred while ending the exam. Please try submitting normally.');
+    }
   }
 
   // Keep submitRef updated with latest handler
