@@ -46,8 +46,8 @@ export async function POST(request) {
       );
     }
 
-    // Generate questions using LLM
-    const questions = await generateExamQuestions(examOutline, 10);
+    // Generate questions using LLM (5 questions to stay under 10s timeout on free tier)
+    const questions = await generateExamQuestions(examOutline, 5);
 
     return Response.json({
       examCode,
