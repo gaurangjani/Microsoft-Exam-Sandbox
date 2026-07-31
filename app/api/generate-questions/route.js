@@ -1,10 +1,26 @@
 import { generateExamQuestions } from '@/lib/question-generator';
 import { fetchExamOutline, fetchExamCatalog } from '@/lib/microsoft-learn';
+import { getRateLimitStatus, getClientIp } from '@/lib/rate-limit';
 
 export const maxDuration = 30;
 
 export async function POST(request) {
   try {
+    // Rate limiting
+    const clientIp = getClientIp(request);
+    const rateLimit = getRateLimitStatus(clientIp);
+
+    if (rateLimit.isLimited) {
+      return Response.json(
+        {
+          error: 'Rate limit exceeded. Maximum 5 questions per minute.',
+          remaining: rateLimit.remaining,
+          resetTime: rateLimit.resetTime,
+        },
+        { status: 429 }
+      );
+    }
+
     const { examCode } = await request.json();
 
     if (!examCode || typeof examCode !== 'string') {
