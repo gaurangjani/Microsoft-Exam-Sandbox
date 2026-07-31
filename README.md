@@ -106,17 +106,18 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 
 ## 🚢 Deployment
 
-### Deploy to Vercel (3 minutes)
+### Deploy to Vercel (1 minute)
 
 1. Go to [vercel.com](https://vercel.com)
 2. Sign in with GitHub
-3. Import `gaurangjani/Microsoft-Exam-Sandbox`
-4. Add environment variables:
-   - `OPENROUTER_API_KEY`
-   - `OPENROUTER_MODEL`
-5. Click "Deploy"
+3. Click "Add New" → "Project"
+4. Import `gaurangjani/Microsoft-Exam-Sandbox`
+5. Add environment variables:
+   - `OPENROUTER_API_KEY` (from openrouter.ai/account/tokens)
+   - `OPENROUTER_MODEL` (e.g., `openai/gpt-3.5-turbo`)
+6. Click "Deploy"
 
-**That's it!** Every push to `main` auto-deploys.
+**Auto-Deploy:** Every push to `main` or `Dev` auto-deploys instantly via Vercel's GitHub integration. No extra setup needed.
 
 📖 **For detailed instructions**, see [DEPLOY_NOW.md](./DEPLOY_NOW.md)
 

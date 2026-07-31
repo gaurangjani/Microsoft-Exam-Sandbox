@@ -32,7 +32,7 @@ https://vercel.com
 ## What's Included
 
 ### ✅ Complete Features
-- Live exam catalog (7 Microsoft certifications)
+- Live exam catalog (14 Microsoft certifications)
 - Searchable exam selector with filters
 - AI-powered question generation (LLM)
 - Timed exam sessions (45-120 min)
@@ -127,7 +127,7 @@ Value: openai/gpt-3.5-turbo
 
 1. **Open the URL** from Vercel (e.g., `exam-sim-abc123.vercel.app`)
 2. **You should see:**
-   - Exam selector with 7 certifications
+   - Exam selector with 14 certifications
    - Search/filter options
    - "Start Practice Exam" buttons
 3. **Click an exam** to test
@@ -216,7 +216,7 @@ lib/
 ### How It Works
 1. User opens app → Exam selector loads (7 exams from seed data)
 2. User picks exam → App fetches exam outline
-3. App calls LLM (OpenRouter) → Generates 10 questions
+3. App calls LLM (OpenRouter) → Generates 5 questions
 4. User takes exam (timed) → Answers questions
 5. User submits → Score calculated + detailed feedback shown
 
