@@ -12,11 +12,28 @@ export default function ExamSession({ exam, onComplete, onError }) {
   const [timeRemaining, setTimeRemaining] = useState(exam.duration * 60);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
+  const [totalBatches, setTotalBatches] = useState(0);
+  const [loadedBatches, setLoadedBatches] = useState(new Set([0]));
+  const [batchLoading, setBatchLoading] = useState(false);
   const submitRef = useRef(null);
+  const loadingRef = useRef(new Set([0]));
 
   useEffect(() => {
     loadQuestions();
   }, [exam]);
+
+  // Load additional batches in background as user progresses
+  useEffect(() => {
+    if (questions.length === 0 || submitted) return;
+
+    const batchIndex = Math.floor(currentIndex / 10);
+    const nextBatchIndex = batchIndex + 1;
+
+    // Prefetch next batch if not already loaded
+    if (nextBatchIndex < totalBatches && !loadingRef.current.has(nextBatchIndex)) {
+      loadBatch(nextBatchIndex);
+    }
+  }, [currentIndex, questions.length, submitted, totalBatches]);
 
   // Start timer only after questions load
   useEffect(() => {
@@ -46,10 +63,43 @@ export default function ExamSession({ exam, onComplete, onError }) {
       if (!response.ok) throw new Error('Failed to load questions');
       const data = await response.json();
       setQuestions(data.questions);
+      setTotalBatches(data.totalBatches || 10);
+      loadingRef.current.add(0);
+      setLoadedBatches(new Set([0]));
       setLoading(false);
     } catch (error) {
       onError(error.message);
       setLoading(false);
+    }
+  }
+
+  async function loadBatch(batchIndex) {
+    if (loadingRef.current.has(batchIndex)) return;
+
+    loadingRef.current.add(batchIndex);
+    setBatchLoading(true);
+
+    try {
+      const response = await fetch('/api/generate-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ examCode: exam.code, batchIndex }),
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to load batch ${batchIndex}`);
+        loadingRef.current.delete(batchIndex);
+        return;
+      }
+
+      const data = await response.json();
+      setQuestions((prev) => [...prev, ...data.questions]);
+      setLoadedBatches((prev) => new Set([...prev, batchIndex]));
+    } catch (error) {
+      console.error(`Error loading batch ${batchIndex}:`, error);
+      loadingRef.current.delete(batchIndex);
+    } finally {
+      setBatchLoading(false);
     }
   }
 
@@ -124,10 +174,18 @@ export default function ExamSession({ exam, onComplete, onError }) {
           <h1 style={styles.title}>{exam.title}</h1>
           <p style={styles.code}>{exam.code}</p>
         </div>
-        <div style={styles.timer}>
-          <span style={{ fontSize: '18px', fontWeight: 'bold', color: timeRemaining < 300 ? '#d13438' : '#000' }}>
-            {formatTime(timeRemaining)}
-          </span>
+        <div style={styles.headerRight}>
+          <div style={styles.batchStatus}>
+            <span style={{ fontSize: '13px', color: '#666' }}>
+              📚 {questions.length} / {totalBatches * 10} questions loaded
+            </span>
+            {batchLoading && <span style={{ marginLeft: '8px', color: '#0078d4' }}>⏳ Loading...</span>}
+          </div>
+          <div style={styles.timer}>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: timeRemaining < 300 ? '#d13438' : '#000' }}>
+              {formatTime(timeRemaining)}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -327,6 +385,19 @@ const styles = {
     padding: '20px 40px',
     borderBottom: '1px solid #ddd',
     backgroundColor: '#f5f5f5',
+    flexWrap: 'wrap',
+    gap: '20px',
+  },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+  },
+  batchStatus: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '13px',
+    color: '#666',
   },
   title: {
     fontSize: '20px',

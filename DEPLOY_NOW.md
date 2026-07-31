@@ -35,6 +35,7 @@ https://vercel.com
 - Live exam catalog (14 Microsoft certifications)
 - Searchable exam selector with filters
 - AI-powered question generation (LLM)
+- **100+ questions per exam** with progressive batch loading
 - Timed exam sessions (45-120 min)
 - Real exam format questions
 - Instant scoring & detailed feedback
@@ -214,11 +215,12 @@ lib/
 ```
 
 ### How It Works
-1. User opens app → Exam selector loads (7 exams from seed data)
+1. User opens app → Exam selector loads (14 exams from seed data)
 2. User picks exam → App fetches exam outline
-3. App calls LLM (OpenRouter) → Generates 5 questions
+3. App calls LLM (OpenRouter) → Generates first batch (10 questions)
 4. User takes exam (timed) → Answers questions
-5. User submits → Score calculated + detailed feedback shown
+5. More batches load in background (up to 100 total questions available)
+6. User submits → Score calculated + detailed feedback shown
 
 ### Tech Stack
 - Frontend: Next.js 14 + React 18

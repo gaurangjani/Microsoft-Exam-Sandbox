@@ -17,19 +17,20 @@ This application implements multiple layers of protection for deployed environme
 **Endpoint**: `POST /api/generate-questions`
 
 **Limits**:
-- 5 requests per minute per IP address
+- 25 requests per minute per IP address
 - Applies to all clients, no authentication bypass
+- Supports progressive batch loading (10 batches × 10 questions = 100 total questions per exam)
 
 **Response on limit exceeded**:
 ```json
 {
-  "error": "Rate limit exceeded. Maximum 5 questions per minute.",
+  "error": "Rate limit exceeded. Maximum 25 requests per minute.",
   "remaining": 0,
   "resetTime": 1722470400000
 }
 ```
 
-**Why**: Protects against accidental or malicious API abuse draining your OpenRouter balance.
+**Why**: Protects against accidental or malicious API abuse draining your OpenRouter balance while allowing reasonable batch loading patterns.
 
 ---
 
