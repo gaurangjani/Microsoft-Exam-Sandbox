@@ -159,10 +159,16 @@ export default function ExamSession({ exam, onComplete, onError }) {
       const answerArray = questions.slice(0, upTo).map((_, idx) => answers[idx] || []);
       const result = calculateScore(answerArray, subset);
 
+      // Only pass answers for the subset of questions
+      const subsetAnswers = {};
+      for (let i = 0; i < upTo; i++) {
+        subsetAnswers[i] = answers[i] || [];
+      }
+
       setQuestions(subset);
       setScore(result);
       setSubmitted(true);
-      onComplete({ exam, result, questions: subset, answers: answerArray });
+      onComplete({ exam, result, questions: subset, answers: subsetAnswers });
     } catch (error) {
       console.error('Error in handleEndEarly:', error);
       alert('An error occurred while ending the exam. Please try submitting normally.');
@@ -456,9 +462,11 @@ function ScoreReport({ exam, score, questions, answers }) {
         <h2 style={{ marginTop: '40px', marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Review Your Answers</h2>
 
         {questions.map((question, idx) => {
-          const result = score.results[idx];
-          const userAnswerTexts = (answers[idx] || []).map(i => question.options[i]).join(', ');
-          const correctAnswerTexts = result.correctAnswers.map(i => question.options[i]).join(', ');
+          const result = score.results?.[idx];
+          if (!result) return null;
+          const userAnswerIndices = Array.isArray(answers) ? answers[idx] : answers[idx];
+          const userAnswerTexts = (userAnswerIndices || []).map(i => question.options[i]).join(', ');
+          const correctAnswerTexts = (result.correctAnswers || []).map(i => question.options[i]).join(', ');
 
           return (
             <div
