@@ -13,6 +13,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
   const [totalBatches, setTotalBatches] = useState(0);
+  const [batchSize, setBatchSize] = useState(5);
   const [loadedBatches, setLoadedBatches] = useState(new Set([0]));
   const [batchLoading, setBatchLoading] = useState(false);
   const submitRef = useRef(null);
@@ -26,14 +27,14 @@ export default function ExamSession({ exam, onComplete, onError }) {
   useEffect(() => {
     if (questions.length === 0 || submitted) return;
 
-    const batchIndex = Math.floor(currentIndex / 10);
+    const batchIndex = Math.floor(currentIndex / batchSize);
     const nextBatchIndex = batchIndex + 1;
 
     // Prefetch next batch if not already loaded
     if (nextBatchIndex < totalBatches && !loadingRef.current.has(nextBatchIndex)) {
       loadBatch(nextBatchIndex);
     }
-  }, [currentIndex, questions.length, submitted, totalBatches]);
+  }, [currentIndex, questions.length, submitted, totalBatches, batchSize]);
 
   // Start timer only after questions load
   useEffect(() => {
@@ -60,10 +61,12 @@ export default function ExamSession({ exam, onComplete, onError }) {
         body: JSON.stringify({ examCode: exam.code }),
       });
 
-      if (!response.ok) throw new Error('Failed to load questions');
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to load questions');
+
       setQuestions(data.questions);
-      setTotalBatches(data.totalBatches || 10);
+      setTotalBatches(data.totalBatches || 50);
+      setBatchSize(data.batchSize || 2);
       loadingRef.current.add(0);
       setLoadedBatches(new Set([0]));
       setLoading(false);
@@ -147,7 +150,14 @@ export default function ExamSession({ exam, onComplete, onError }) {
   if (loading) {
     return (
       <div style={styles.container}>
-        <p>Loading exam questions...</p>
+        <div style={{ padding: '60px 40px', textAlign: 'center' }}>
+          <p style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
+            Generating exam questions...
+          </p>
+          <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>
+            This can take up to a minute depending on the AI model configured. Thanks for your patience.
+          </p>
+        </div>
       </div>
     );
   }
@@ -177,7 +187,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
         <div style={styles.headerRight}>
           <div style={styles.batchStatus}>
             <span style={{ fontSize: '13px', color: '#666' }}>
-              📚 {questions.length} / {totalBatches * 10} questions loaded
+              📚 {questions.length} / {totalBatches * batchSize} questions loaded
             </span>
             {batchLoading && <span style={{ marginLeft: '8px', color: '#0078d4' }}>⏳ Loading...</span>}
           </div>
@@ -205,7 +215,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
               Question {currentIndex + 1} of {questions.length}
               {totalBatches > 1 && (
                 <span style={{ color: '#0078d4', fontWeight: '600' }}>
-                  {' '}(Batch {Math.floor(currentIndex / 10) + 1}/{totalBatches})
+                  {' '}(Batch {Math.floor(currentIndex / batchSize) + 1}/{totalBatches})
                 </span>
               )}
               {isMarked && ' 🚩'}
@@ -258,7 +268,8 @@ export default function ExamSession({ exam, onComplete, onError }) {
               ))}
             </div>
 
-            {currentIndex === questions.length - 1 && (
+            {currentIndex === questions.length - 1 &&
+              (totalBatches === 0 || currentIndex + 1 >= totalBatches * batchSize) && (
               <div style={styles.submissionSummary}>
                 <p style={{ margin: '0 0 12px 0', fontWeight: '600', fontSize: '14px' }}>📋 Exam Summary:</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
@@ -311,6 +322,14 @@ export default function ExamSession({ exam, onComplete, onError }) {
                     style={styles.btn}
                   >
                     Next →
+                  </button>
+                ) : totalBatches > 0 && currentIndex + 1 < totalBatches * batchSize ? (
+                  <button
+                    disabled
+                    style={{ ...styles.btn, opacity: 0.6, cursor: 'wait' }}
+                    title="The next question is still being generated"
+                  >
+                    ⏳ Loading next question...
                   </button>
                 ) : (
                   <button

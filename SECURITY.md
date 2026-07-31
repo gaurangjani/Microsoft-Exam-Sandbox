@@ -19,7 +19,7 @@ This application implements multiple layers of protection for deployed environme
 **Limits**:
 - 25 requests per minute per IP address
 - Applies to all clients, no authentication bypass
-- Supports progressive batch loading (10 batches × 10 questions = 100 total questions per exam)
+- Supports progressive batch loading (50 batches × 2 questions = 100 total questions per exam)
 
 **Response on limit exceeded**:
 ```json

@@ -2,9 +2,9 @@ import { generateExamQuestions } from '@/lib/question-generator';
 import { fetchExamOutline, fetchExamCatalog } from '@/lib/microsoft-learn';
 import { getRateLimitStatus, getClientIp } from '@/lib/rate-limit';
 
-export const maxDuration = 10;
+export const maxDuration = 40;
 
-const BATCH_SIZE = 5;
+const BATCH_SIZE = 2;
 const TOTAL_QUESTIONS = 100;
 const TOTAL_BATCHES = Math.ceil(TOTAL_QUESTIONS / BATCH_SIZE);
 
