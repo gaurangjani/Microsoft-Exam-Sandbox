@@ -32,9 +32,10 @@ https://vercel.com
 ## What's Included
 
 ### ✅ Complete Features
-- Live exam catalog (7 Microsoft certifications)
+- Live exam catalog (14 Microsoft certifications)
 - Searchable exam selector with filters
 - AI-powered question generation (LLM)
+- **100+ questions per exam** with progressive batch loading
 - Timed exam sessions (45-120 min)
 - Real exam format questions
 - Instant scoring & detailed feedback
@@ -127,7 +128,7 @@ Value: openai/gpt-3.5-turbo
 
 1. **Open the URL** from Vercel (e.g., `exam-sim-abc123.vercel.app`)
 2. **You should see:**
-   - Exam selector with 7 certifications
+   - Exam selector with 14 certifications
    - Search/filter options
    - "Start Practice Exam" buttons
 3. **Click an exam** to test
@@ -214,11 +215,22 @@ lib/
 ```
 
 ### How It Works
-1. User opens app → Exam selector loads (7 exams from seed data)
+1. User opens app → Exam selector loads (14 exams from seed data)
 2. User picks exam → App fetches exam outline
-3. App calls LLM (OpenRouter) → Generates 10 questions
+3. App calls LLM (OpenRouter) → Generates first batch (2 questions)
 4. User takes exam (timed) → Answers questions
-5. User submits → Score calculated + detailed feedback shown
+5. More batches load in background (up to 100 total questions available)
+6. Each batch generates in a few seconds with a fast model (e.g.
+   `openai/gpt-3.5-turbo`), or up to ~35 seconds with a large/free-tier
+   model — the UI shows "⏳ Loading next question..." if the user
+   catches up to the loading batch
+7. User submits → Score calculated + detailed feedback shown
+
+**Note on model speed:** Batch size (2 questions) and timeout (35s) are
+tuned to accommodate large free-tier models like 550B-parameter models,
+which can be slow due to shared queue capacity on OpenRouter. For a much
+faster, snappier experience, use a small/fast model such as
+`openai/gpt-3.5-turbo` or `google/gemini-2.0-flash-exp:free`.
 
 ### Tech Stack
 - Frontend: Next.js 14 + React 18
