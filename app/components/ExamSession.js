@@ -398,6 +398,21 @@ export default function ExamSession({ exam, onComplete, onError }) {
 function ScoreReport({ exam, score, questions, answers }) {
   const scorePercentage = Math.round(score.scorePercentage);
 
+  // Calculate scores by skill area/category
+  const categoryScores = {};
+  questions.forEach((question, idx) => {
+    const category = question.skillArea || 'Uncategorized';
+    if (!categoryScores[category]) {
+      categoryScores[category] = { total: 0, correct: 0 };
+    }
+    categoryScores[category].total += 1;
+    if (score.results[idx]?.isCorrect) {
+      categoryScores[category].correct += 1;
+    }
+  });
+
+  const sortedCategories = Object.entries(categoryScores).sort((a, b) => b[1].correct - a[1].correct);
+
   return (
     <div style={styles.container}>
       <div style={styles.reportHeader}>
@@ -417,7 +432,23 @@ function ScoreReport({ exam, score, questions, answers }) {
       </div>
 
       <div style={styles.reportContent}>
-        <h2 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Review Your Answers</h2>
+        <h2 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: '600' }}>Performance by Category</h2>
+        <div style={styles.categoryGrid}>
+          {sortedCategories.map(([category, stats]) => {
+            const categoryPercentage = Math.round((stats.correct / stats.total) * 100);
+            return (
+              <div key={category} style={styles.categoryCard}>
+                <div style={styles.categoryName}>{category}</div>
+                <div style={styles.categoryScore}>{categoryPercentage}%</div>
+                <div style={styles.categoryDetails}>
+                  {stats.correct} of {stats.total} correct
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <h2 style={{ marginTop: '40px', marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Review Your Answers</h2>
 
         {questions.map((question, idx) => {
           const result = score.results[idx];
@@ -748,5 +779,35 @@ const styles = {
     color: 'var(--accent)',
     textDecoration: 'none',
     fontWeight: '600',
+  },
+  categoryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '16px',
+    marginBottom: '40px',
+  },
+  categoryCard: {
+    padding: '20px',
+    border: '1px solid var(--border-color)',
+    borderRadius: '6px',
+    backgroundColor: 'var(--bg-surface)',
+    textAlign: 'center',
+  },
+  categoryName: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: 'var(--text-primary)',
+    marginBottom: '12px',
+    lineHeight: '1.4',
+  },
+  categoryScore: {
+    fontSize: '32px',
+    fontWeight: 'bold',
+    color: 'var(--accent)',
+    marginBottom: '8px',
+  },
+  categoryDetails: {
+    fontSize: '13px',
+    color: 'var(--text-secondary)',
   },
 };
