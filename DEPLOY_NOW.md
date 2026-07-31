@@ -217,10 +217,11 @@ lib/
 ### How It Works
 1. User opens app → Exam selector loads (14 exams from seed data)
 2. User picks exam → App fetches exam outline
-3. App calls LLM (OpenRouter) → Generates first batch (10 questions)
+3. App calls LLM (OpenRouter) → Generates first batch (5 questions, ~2-3 sec)
 4. User takes exam (timed) → Answers questions
 5. More batches load in background (up to 100 total questions available)
-6. User submits → Score calculated + detailed feedback shown
+6. Each batch takes ~2-3 seconds, loads while user answers
+7. User submits → Score calculated + detailed feedback shown
 
 ### Tech Stack
 - Frontend: Next.js 14 + React 18
