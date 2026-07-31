@@ -1,5 +1,5 @@
 import { generateExamQuestions } from '@/lib/question-generator';
-import { fetchExamOutline } from '@/lib/microsoft-learn';
+import { fetchExamOutline, fetchExamCatalog } from '@/lib/microsoft-learn';
 
 export const maxDuration = 30;
 
@@ -7,16 +7,26 @@ export async function POST(request) {
   try {
     const { examCode } = await request.json();
 
-    if (!examCode) {
-      return Response.json({ error: 'examCode is required' }, { status: 400 });
+    if (!examCode || typeof examCode !== 'string') {
+      return Response.json({ error: 'examCode is required and must be a string' }, { status: 400 });
     }
 
-    // Fetch the exam outline (real fetch from Microsoft Learn)
+    // Validate exam code against catalog
+    const catalog = await fetchExamCatalog();
+    const examExists = catalog.some((e) => e.code === examCode);
+    if (!examExists) {
+      return Response.json(
+        { error: `Exam code "${examCode}" not found in catalog` },
+        { status: 400 }
+      );
+    }
+
+    // Fetch the exam outline
     const examOutline = await fetchExamOutline(examCode);
     if (!examOutline) {
       return Response.json(
-        { error: `Exam outline not found for ${examCode}` },
-        { status: 404 }
+        { error: `Exam outline not available for ${examCode}` },
+        { status: 503 }
       );
     }
 
@@ -27,8 +37,8 @@ export async function POST(request) {
       examCode,
       title: examOutline.title,
       questions,
-      duration: examOutline.duration || 120,
-      passingScore: examOutline.passingScore || 700,
+      duration: examOutline.duration,
+      passingScore: examOutline.passingScore,
     });
   } catch (error) {
     console.error('Error generating questions:', error);

@@ -25,6 +25,11 @@ export default function Home() {
   }
 
   function handleBackToSelector() {
+    if (currentView === 'session' && !error) {
+      if (!confirm('Are you sure? Your exam progress will be lost.')) {
+        return;
+      }
+    }
     setCurrentView('selector');
     setSelectedExam(null);
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { calculateScore } from '@/lib/question-generator';
 
 export default function ExamSession({ exam, onComplete, onError }) {
@@ -12,16 +12,20 @@ export default function ExamSession({ exam, onComplete, onError }) {
   const [timeRemaining, setTimeRemaining] = useState(exam.duration * 60);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
+  const submitRef = useRef(null);
 
   useEffect(() => {
     loadQuestions();
   }, [exam]);
 
+  // Start timer only after questions load
   useEffect(() => {
+    if (loading || submitted) return;
+
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          handleSubmit();
+          submitRef.current?.();
           return 0;
         }
         return prev - 1;
@@ -29,7 +33,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [submitted]);
+  }, [loading, submitted]);
 
   async function loadQuestions() {
     try {
@@ -66,8 +70,8 @@ export default function ExamSession({ exam, onComplete, onError }) {
     setMarkedForReview(newMarked);
   }
 
-  function handleSubmit() {
-    if (submitted) return;
+  const handleSubmit = () => {
+    if (submitted || questions.length === 0) return;
 
     // Convert answers object to array aligned with questions
     const answerArray = questions.map((_, idx) => answers[idx] || []);
@@ -76,7 +80,12 @@ export default function ExamSession({ exam, onComplete, onError }) {
     setScore(result);
     setSubmitted(true);
     onComplete({ exam, result, questions, answers: answerArray });
-  }
+  };
+
+  // Keep submitRef updated with latest handler
+  useEffect(() => {
+    submitRef.current = handleSubmit;
+  }, [submitted, questions, answers]);
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
@@ -257,7 +266,8 @@ function ScoreReport({ exam, score, questions, answers }) {
 
         {questions.map((question, idx) => {
           const result = score.results[idx];
-          const userAnswerText = question.options[answers[idx]?.[0]];
+          const userAnswerTexts = (answers[idx] || []).map(i => question.options[i]).join(', ');
+          const correctAnswerTexts = result.correctAnswers.map(i => question.options[i]).join(', ');
 
           return (
             <div
@@ -281,20 +291,22 @@ function ScoreReport({ exam, score, questions, answers }) {
               <p style={styles.reviewQuestion}>{question.question}</p>
 
               <div style={styles.reviewAnswers}>
-                <p><strong>Your answer:</strong> {userAnswerText || 'Not answered'}</p>
-                <p><strong>Correct answer:</strong> {question.options[result.correctAnswers[0]]}</p>
+                <p><strong>Your answer:</strong> {userAnswerTexts || 'Not answered'}</p>
+                <p><strong>Correct answer:</strong> {correctAnswerTexts}</p>
               </div>
 
               <p style={styles.reviewExplanation}>{question.explanation}</p>
 
-              <a
-                href={question.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={styles.reviewLink}
-              >
-                Learn more →
-              </a>
+              {question.sourceUrl && (
+                <a
+                  href={question.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={styles.reviewLink}
+                >
+                  Learn more →
+                </a>
+              )}
             </div>
           );
         })}
