@@ -37,8 +37,15 @@ Copy `.env.example` to `.env.local` and fill in values:
 cp .env.example .env.local
 ```
 
-Required:
+**Required:**
 - `OPENROUTER_API_KEY` – Get from [openrouter.ai/keys](https://openrouter.ai/keys) (free tier available)
+- `OPENROUTER_MODEL` – LLM model to use for question generation
+
+**Recommended Models:**
+- `openai/gpt-3.5-turbo` (default) – Fast, cheap, good quality
+- `openai/gpt-4-turbo` – Better quality, slower
+- `anthropic/claude-3-sonnet` – Balanced performance
+- [Full list of models](https://openrouter.ai/docs#models)
 
 ### 3. Vercel Deployment (GitHub Integration)
 

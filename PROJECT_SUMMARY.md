@@ -47,7 +47,8 @@ microsoft-exam-sandbox/
 
 #### 3. Question Generation Engine (`lib/question-generator.js`)
 - **On-demand only**: Questions fetched only when exam is selected
-- Uses OpenRouter API to call LLM (gpt-3.5-turbo)
+- Uses OpenRouter API to call configurable LLM model (default: gpt-3.5-turbo)
+- Supports any model from OpenRouter (GPT-4, Claude, Llama, etc.)
 - Generates 10 original questions per exam
 - Question types:
   - Single-select MCQ (3-4 options)
@@ -137,16 +138,20 @@ Fetches exam outline and generates questions.
 
 ## 🚀 Quick Start for Deployment
 
-### 1. Get API Key
+### 1. Get API Key and Choose Model
 - Visit https://openrouter.ai/keys
 - Create free account
 - Copy API key (starts with `sk_`)
+- Choose LLM model: https://openrouter.ai/docs#models
+  - Recommended: `openai/gpt-3.5-turbo` (free tier eligible)
 
 ### 2. Deploy to Vercel
 - Go to https://vercel.com
 - Sign in with GitHub
 - Import `gaurangjani/Microsoft-Exam-Sandbox`
-- Add environment variable: `OPENROUTER_API_KEY=sk_...`
+- Add environment variables:
+  - `OPENROUTER_API_KEY=sk_...` (your API key)
+  - `OPENROUTER_MODEL=openai/gpt-3.5-turbo` (or your chosen model)
 - Click "Deploy"
 - Wait 2-3 minutes
 - Test at https://exam-sim.vercel.app (or your custom domain)

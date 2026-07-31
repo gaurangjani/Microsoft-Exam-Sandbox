@@ -21,7 +21,10 @@
    - In "Environment Variables", add:
      ```
      OPENROUTER_API_KEY=sk_...your-key-here...
+     OPENROUTER_MODEL=openai/gpt-3.5-turbo
      ```
+   - Model options: `openai/gpt-3.5-turbo`, `openai/gpt-4-turbo`, `anthropic/claude-3-sonnet`
+   - See [full model list](https://openrouter.ai/docs#models)
    - Click "Deploy"
 
 4. **Confirm Deploy**
@@ -48,24 +51,33 @@ npm install
 
 # Copy environment template
 cp .env.example .env.local
-# Edit .env.local and add your OPENROUTER_API_KEY
+# Edit .env.local and add your keys
 
 # Run dev server
 npm run dev
 # Open http://localhost:3000
 ```
 
+### Environment Variables for Local Development
+
+Edit `.env.local`:
+```
+OPENROUTER_API_KEY=sk_...your-key-from-openrouter.ai...
+OPENROUTER_MODEL=openai/gpt-3.5-turbo
+```
+
 ### Testing Question Generation
 
-The question generation endpoint requires `OPENROUTER_API_KEY`.
+The question generation endpoint requires both `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`.
 
-Without the key:
+Without them:
 - Exam selector loads ✅
 - Question generation returns error when starting exam ❌
 
-Add key to `.env.local`:
+Add both to `.env.local`:
 ```
 OPENROUTER_API_KEY=sk_...
+OPENROUTER_MODEL=openai/gpt-3.5-turbo
 npm run dev
 ```
 
