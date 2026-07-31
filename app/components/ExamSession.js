@@ -539,13 +539,13 @@ const styles = {
   },
   questionGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))',
-    gap: '8px',
-    maxWidth: '400px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
+    gap: '6px',
+    maxWidth: '100%',
   },
   qButton: {
-    padding: '8px',
-    fontSize: '12px',
+    padding: '6px 4px',
+    fontSize: '11px',
     border: '1px solid var(--border-color)',
     backgroundColor: 'var(--bg-surface)',
     color: 'var(--text-primary)',
