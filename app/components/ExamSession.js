@@ -203,6 +203,11 @@ export default function ExamSession({ exam, onComplete, onError }) {
           <div style={styles.questionNav}>
             <p style={styles.qNum}>
               Question {currentIndex + 1} of {questions.length}
+              {totalBatches > 1 && (
+                <span style={{ color: '#0078d4', fontWeight: '600' }}>
+                  {' '}(Batch {Math.floor(currentIndex / 10) + 1}/{totalBatches})
+                </span>
+              )}
               {isMarked && ' 🚩'}
             </p>
 
@@ -253,6 +258,32 @@ export default function ExamSession({ exam, onComplete, onError }) {
               ))}
             </div>
 
+            {currentIndex === questions.length - 1 && (
+              <div style={styles.submissionSummary}>
+                <p style={{ margin: '0 0 12px 0', fontWeight: '600', fontSize: '14px' }}>📋 Exam Summary:</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#107c10' }}>
+                      {Object.keys(answers).filter(k => answers[k]?.length > 0).length}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Answered</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffd700' }}>
+                      {markedForReview.size}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Marked for Review</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#d13438' }}>
+                      {questions.length - Object.keys(answers).filter(k => answers[k]?.length > 0).length}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Unanswered</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div style={styles.actions}>
               <button
                 onClick={() => toggleMarkForReview(currentIndex)}
@@ -284,9 +315,17 @@ export default function ExamSession({ exam, onComplete, onError }) {
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    style={{ ...styles.btn, backgroundColor: '#107c10', color: '#fff' }}
+                    style={{
+                      ...styles.btn,
+                      backgroundColor: '#107c10',
+                      color: '#fff',
+                      fontSize: '16px',
+                      padding: '12px 24px',
+                      fontWeight: 'bold'
+                    }}
+                    title="Review your answers before final submission"
                   >
-                    Submit Exam
+                    ✓ Review & Submit
                   </button>
                 )}
               </div>
@@ -498,12 +537,21 @@ const styles = {
     flex: 1,
     fontSize: '14px',
   },
+  submissionSummary: {
+    padding: '16px',
+    marginBottom: '24px',
+    backgroundColor: '#f0f9ff',
+    border: '1px solid #0078d4',
+    borderRadius: '4px',
+  },
   actions: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: '24px',
     borderTop: '1px solid #ddd',
+    flexWrap: 'wrap',
+    gap: '12px',
   },
   btn: {
     padding: '10px 20px',
