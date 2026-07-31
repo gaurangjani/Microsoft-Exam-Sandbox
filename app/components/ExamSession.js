@@ -141,6 +141,29 @@ export default function ExamSession({ exam, onComplete, onError }) {
     onComplete({ exam, result, questions, answers: answerArray });
   };
 
+  function handleEndEarly() {
+    if (submitted || questions.length === 0) return;
+
+    const answeredCount = Object.keys(answers).filter((k) => answers[k]?.length > 0).length;
+    const upTo = currentIndex + 1;
+    if (
+      !confirm(
+        `End the exam now?\n\nYou have answered ${answeredCount} of the ${upTo} question(s) reached so far. Only those ${upTo} question(s) will be scored — unanswered ones count as incorrect.`
+      )
+    ) {
+      return;
+    }
+
+    const subset = questions.slice(0, upTo);
+    const answerArray = subset.map((_, idx) => answers[idx] || []);
+    const result = calculateScore(answerArray, subset);
+
+    setQuestions(subset);
+    setScore(result);
+    setSubmitted(true);
+    onComplete({ exam, result, questions: subset, answers: answerArray });
+  }
+
   // Keep submitRef updated with latest handler
   useEffect(() => {
     submitRef.current = handleSubmit;
@@ -160,7 +183,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
           <p style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
             Generating exam questions...
           </p>
-          <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
             This can take up to a minute depending on the AI model configured. Thanks for your patience.
           </p>
         </div>
@@ -193,14 +216,14 @@ export default function ExamSession({ exam, onComplete, onError }) {
         </div>
         <div style={styles.headerRight}>
           <div style={styles.batchStatus}>
-            <span style={{ fontSize: '13px', color: '#666' }}>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
               📚 {questions.length} question{questions.length !== 1 ? 's' : ''} ready
               {moreBatchesPending && ` (target ${totalBatches * batchSize})`}
             </span>
-            {batchLoading && <span style={{ marginLeft: '8px', color: '#0078d4' }}>⏳ Loading more...</span>}
+            {batchLoading && <span style={{ marginLeft: '8px', color: 'var(--accent)' }}>⏳ Loading more...</span>}
           </div>
           <div style={styles.timer}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: timeRemaining < 300 ? '#d13438' : '#000' }}>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: timeRemaining < 300 ? 'var(--danger)' : 'var(--text-primary)' }}>
               {formatTime(timeRemaining)}
             </span>
           </div>
@@ -222,7 +245,7 @@ export default function ExamSession({ exam, onComplete, onError }) {
             <p style={styles.qNum}>
               Question {currentIndex + 1} of {questions.length}
               {moreBatchesPending && (
-                <span style={{ color: '#0078d4', fontWeight: '600' }}> (more loading…)</span>
+                <span style={{ color: 'var(--accent)', fontWeight: '600' }}> (more loading…)</span>
               )}
               {isMarked && ' 🚩'}
             </p>
@@ -234,9 +257,9 @@ export default function ExamSession({ exam, onComplete, onError }) {
                   onClick={() => setCurrentIndex(idx)}
                   style={{
                     ...styles.qButton,
-                    ...(idx === currentIndex && styles.qButtonActive),
                     ...(answers[idx] && styles.qButtonAnswered),
                     ...(markedForReview.has(idx) && styles.qButtonMarked),
+                    ...(idx === currentIndex && styles.qButtonActive),
                   }}
                   title={`Q${idx + 1}${markedForReview.has(idx) ? ' (marked)' : ''}${answers[idx] ? ' (answered)' : ''}`}
                 >
@@ -279,38 +302,48 @@ export default function ExamSession({ exam, onComplete, onError }) {
                 <p style={{ margin: '0 0 12px 0', fontWeight: '600', fontSize: '14px' }}>📋 Exam Summary:</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#107c10' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--success)' }}>
                       {Object.keys(answers).filter(k => answers[k]?.length > 0).length}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Answered</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Answered</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffd700' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--warning-border)' }}>
                       {markedForReview.size}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Marked for Review</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Marked for Review</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#d13438' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--danger)' }}>
                       {questions.length - Object.keys(answers).filter(k => answers[k]?.length > 0).length}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Unanswered</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Unanswered</div>
                   </div>
                 </div>
               </div>
             )}
 
             <div style={styles.actions}>
-              <button
-                onClick={() => toggleMarkForReview(currentIndex)}
-                style={{
-                  ...styles.btn,
-                  ...styles.btnSecondary,
-                  ...(isMarked && styles.btnSecondaryActive),
-                }}
-              >
-                {isMarked ? '🚩 Marked' : '☐ Mark for Review'}
-              </button>
+              <div style={styles.leftActions}>
+                <button
+                  onClick={() => toggleMarkForReview(currentIndex)}
+                  style={{
+                    ...styles.btn,
+                    ...styles.btnSecondary,
+                    ...(isMarked && styles.btnSecondaryActive),
+                  }}
+                >
+                  {isMarked ? '🚩 Marked' : '☐ Mark for Review'}
+                </button>
+
+                <button
+                  onClick={handleEndEarly}
+                  style={{ ...styles.btn, ...styles.btnDanger }}
+                  title="End the exam now and score only the questions attempted so far"
+                >
+                  ⏹ End Exam
+                </button>
+              </div>
 
               <div style={styles.navButtons}>
                 <button
@@ -341,7 +374,8 @@ export default function ExamSession({ exam, onComplete, onError }) {
                     onClick={handleSubmit}
                     style={{
                       ...styles.btn,
-                      backgroundColor: '#107c10',
+                      backgroundColor: 'var(--success)',
+                      border: '1px solid var(--success)',
                       color: '#fff',
                       fontSize: '16px',
                       padding: '12px 24px',
@@ -370,7 +404,7 @@ function ScoreReport({ exam, score, questions, answers }) {
         <h1 style={styles.title}>{exam.title}</h1>
         <div style={{
           ...styles.scoreCard,
-          backgroundColor: score.passed ? '#107c10' : '#d13438',
+          backgroundColor: score.passed ? 'var(--success)' : 'var(--danger)',
         }}>
           <div style={styles.scoreValue}>{scorePercentage}%</div>
           <div style={styles.scoreStatus}>
@@ -395,13 +429,13 @@ function ScoreReport({ exam, score, questions, answers }) {
               key={idx}
               style={{
                 ...styles.reviewItem,
-                borderLeftColor: result.isCorrect ? '#107c10' : '#d13438',
+                borderLeftColor: result.isCorrect ? 'var(--success)' : 'var(--danger)',
               }}
             >
               <div style={styles.reviewHeader}>
                 <span style={{
                   ...styles.reviewIcon,
-                  color: result.isCorrect ? '#107c10' : '#d13438',
+                  color: result.isCorrect ? 'var(--success)' : 'var(--danger)',
                 }}>
                   {result.isCorrect ? '✓' : '✗'}
                 </span>
@@ -439,15 +473,16 @@ function ScoreReport({ exam, score, questions, answers }) {
 const styles = {
   container: {
     fontFamily: 'system-ui, -apple-system, sans-serif',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--bg-page)',
+    color: 'var(--text-primary)',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '20px 40px',
-    borderBottom: '1px solid #ddd',
-    backgroundColor: '#f5f5f5',
+    borderBottom: '1px solid var(--border-color)',
+    backgroundColor: 'var(--bg-surface-alt)',
     flexWrap: 'wrap',
     gap: '20px',
   },
@@ -460,17 +495,17 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     fontSize: '13px',
-    color: '#666',
+    color: 'var(--text-secondary)',
   },
   title: {
     fontSize: '20px',
     fontWeight: '600',
     margin: 0,
-    color: '#000',
+    color: 'var(--text-primary)',
   },
   code: {
     fontSize: '12px',
-    color: '#666',
+    color: 'var(--text-secondary)',
     margin: '4px 0 0 0',
   },
   timer: {
@@ -478,11 +513,11 @@ const styles = {
   },
   progressBar: {
     height: '4px',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'var(--border-color)',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#0078d4',
+    backgroundColor: 'var(--accent)',
     transition: 'width 0.3s',
   },
   content: {
@@ -499,7 +534,7 @@ const styles = {
   },
   qNum: {
     fontSize: '14px',
-    color: '#666',
+    color: 'var(--text-secondary)',
     margin: '0 0 12px 0',
   },
   questionGrid: {
@@ -511,24 +546,33 @@ const styles = {
   qButton: {
     padding: '8px',
     fontSize: '12px',
-    border: '1px solid #ddd',
-    backgroundColor: '#fff',
+    border: '1px solid var(--border-color)',
+    backgroundColor: 'var(--bg-surface)',
+    color: 'var(--text-primary)',
     borderRadius: '4px',
     cursor: 'pointer',
     transition: 'all 0.2s',
   },
-  qButtonActive: {
-    backgroundColor: '#0078d4',
-    color: '#fff',
-    border: '1px solid #0078d4',
-  },
   qButtonAnswered: {
-    backgroundColor: '#e7f3f9',
-    border: '1px solid #0078d4',
+    backgroundColor: 'var(--accent-soft-bg)',
+    border: '1px solid var(--accent)',
+    color: 'var(--text-primary)',
   },
   qButtonMarked: {
-    backgroundColor: '#fff4ce',
-    border: '1px solid #ffd700',
+    backgroundColor: 'var(--warning-bg)',
+    border: '1px solid var(--warning-border)',
+    color: 'var(--text-primary)',
+  },
+  // Applied last so the current question always stands out clearly,
+  // even when it is also answered and/or marked
+  qButtonActive: {
+    backgroundColor: 'var(--accent)',
+    color: 'var(--accent-contrast)',
+    border: '1px solid var(--accent)',
+    fontWeight: 'bold',
+    outline: '2px solid var(--text-primary)',
+    outlineOffset: '1px',
+    transform: 'scale(1.12)',
   },
   question: {
     marginBottom: '40px',
@@ -538,6 +582,7 @@ const styles = {
     fontWeight: '600',
     margin: '0 0 24px 0',
     lineHeight: '1.5',
+    color: 'var(--text-primary)',
   },
   options: {
     marginBottom: '32px',
@@ -547,7 +592,8 @@ const styles = {
     alignItems: 'flex-start',
     padding: '12px',
     marginBottom: '12px',
-    border: '1px solid #ddd',
+    border: '1px solid var(--border-color)',
+    backgroundColor: 'var(--bg-surface)',
     borderRadius: '4px',
     cursor: 'pointer',
     transition: 'all 0.2s',
@@ -560,12 +606,13 @@ const styles = {
   optionText: {
     flex: 1,
     fontSize: '14px',
+    color: 'var(--text-primary)',
   },
   submissionSummary: {
     padding: '16px',
     marginBottom: '24px',
-    backgroundColor: '#f0f9ff',
-    border: '1px solid #0078d4',
+    backgroundColor: 'var(--accent-soft-bg)',
+    border: '1px solid var(--accent)',
     borderRadius: '4px',
   },
   actions: {
@@ -573,30 +620,40 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: '24px',
-    borderTop: '1px solid #ddd',
+    borderTop: '1px solid var(--border-color)',
     flexWrap: 'wrap',
     gap: '12px',
+  },
+  leftActions: {
+    display: 'flex',
+    gap: '12px',
+    flexWrap: 'wrap',
   },
   btn: {
     padding: '10px 20px',
     fontSize: '14px',
     fontWeight: '600',
-    border: '1px solid #0078d4',
-    backgroundColor: '#0078d4',
-    color: '#fff',
+    border: '1px solid var(--accent)',
+    backgroundColor: 'var(--accent)',
+    color: 'var(--accent-contrast)',
     borderRadius: '4px',
     cursor: 'pointer',
     transition: 'all 0.2s',
   },
   btnSecondary: {
-    backgroundColor: '#fff',
-    color: '#0078d4',
-    border: '1px solid #0078d4',
+    backgroundColor: 'var(--bg-surface)',
+    color: 'var(--accent)',
+    border: '1px solid var(--accent)',
   },
   btnSecondaryActive: {
-    backgroundColor: '#ffd700',
+    backgroundColor: 'var(--warning-border)',
     color: '#000',
-    border: '1px solid #ffd700',
+    border: '1px solid var(--warning-border)',
+  },
+  btnDanger: {
+    backgroundColor: 'var(--bg-surface)',
+    color: 'var(--danger)',
+    border: '1px solid var(--danger)',
   },
   navButtons: {
     display: 'flex',
@@ -605,7 +662,7 @@ const styles = {
   // Report styles
   reportHeader: {
     padding: '40px',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'var(--bg-surface-alt)',
     textAlign: 'center',
   },
   scoreCard: {
@@ -638,10 +695,10 @@ const styles = {
   reviewItem: {
     padding: '20px',
     marginBottom: '20px',
-    border: '1px solid #ddd',
-    borderLeft: '4px solid #999',
+    border: '1px solid var(--border-color)',
+    borderLeft: '4px solid var(--text-muted)',
     borderRadius: '4px',
-    backgroundColor: '#fafafa',
+    backgroundColor: 'var(--bg-surface-alt)',
   },
   reviewHeader: {
     display: 'flex',
@@ -660,8 +717,8 @@ const styles = {
   },
   reviewType: {
     fontSize: '12px',
-    backgroundColor: '#e7f3f9',
-    color: '#0078d4',
+    backgroundColor: 'var(--accent-soft-bg)',
+    color: 'var(--accent)',
     padding: '4px 8px',
     borderRadius: '3px',
   },
@@ -675,7 +732,7 @@ const styles = {
     fontSize: '14px',
     margin: '12px 0',
     padding: '12px',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--bg-surface)',
     borderRadius: '4px',
     lineHeight: '1.6',
   },
@@ -684,11 +741,11 @@ const styles = {
     margin: '12px 0',
     lineHeight: '1.6',
     fontStyle: 'italic',
-    color: '#555',
+    color: 'var(--text-secondary)',
   },
   reviewLink: {
     fontSize: '13px',
-    color: '#0078d4',
+    color: 'var(--accent)',
     textDecoration: 'none',
     fontWeight: '600',
   },

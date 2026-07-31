@@ -65,7 +65,7 @@ export default function Home() {
 
 const styles = {
   main: {
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--bg-page)',
     minHeight: '100vh',
   },
   errorContainer: {
@@ -74,17 +74,17 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'var(--bg-surface-alt)',
     fontFamily: 'system-ui, -apple-system, sans-serif',
   },
   errorTitle: {
     fontSize: '28px',
-    color: '#d13438',
+    color: 'var(--danger)',
     marginBottom: '10px',
   },
   errorMessage: {
     fontSize: '16px',
-    color: '#555',
+    color: 'var(--text-secondary)',
     marginBottom: '20px',
     maxWidth: '500px',
     textAlign: 'center',
@@ -92,8 +92,8 @@ const styles = {
   errorBtn: {
     padding: '10px 20px',
     fontSize: '14px',
-    backgroundColor: '#0078d4',
-    color: '#fff',
+    backgroundColor: 'var(--accent)',
+    color: 'var(--accent-contrast)',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
@@ -104,9 +104,9 @@ const styles = {
     left: '10px',
     padding: '8px 16px',
     fontSize: '13px',
-    backgroundColor: '#fff',
-    color: '#0078d4',
-    border: '1px solid #0078d4',
+    backgroundColor: 'var(--bg-surface)',
+    color: 'var(--accent)',
+    border: '1px solid var(--accent)',
     borderRadius: '4px',
     cursor: 'pointer',
     zIndex: 100,
