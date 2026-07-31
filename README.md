@@ -2,22 +2,21 @@
 
 A web app that simulates the real Microsoft certification exam experience for practice and preparation. Content is sourced live from Microsoft Learn—fetched only on-demand, never pre-fetched in bulk.
 
-## Features (In Development)
+## Features
 
-- **Live Exam Catalog**: Fetch certification list from Microsoft Learn (cached daily)
-- **On-Demand Content**: Questions generated from live "Skills measured" outlines—fetched only when exam is selected
-- **Realistic Exam Format**: Single/multi-select MCQ, case studies, scenario sets, ordering questions
-- **Timed Sessions**: Countdown timer matching real exam duration
-- **Scoring & Feedback**: Pass/fail results, section scores, per-question review with source links
-- **Exam History**: Track attempts and progress with Postgres
+- ✅ **Live Exam Catalog**: Fetch certification list (cached daily)
+- ✅ **On-Demand Questions**: LLM-generated from live "Skills measured" outlines
+- ✅ **Realistic Exam Format**: Single/multi-select MCQ, true/false, scenario-based
+- ✅ **Timed Sessions**: Countdown timer, question navigation, mark for review
+- ✅ **Scoring & Feedback**: Pass/fail result, per-question review with explanations & source links
+- ⏳ **Microsoft Learn MCP Integration**: Ready for live content fetching (placeholder data currently)
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router) → Deployed on Vercel
-- **Live Content**: Microsoft Learn MCP (on-demand fetching)
-- **Question Generation**: OpenRouter LLM (structured JSON output)
-- **Database**: Vercel Postgres or Supabase
+- **Question Generation**: OpenRouter LLM (structured JSON)
 - **Deployment**: Vercel (GitHub integration, auto-deploy on `main`)
+- **No Database**: Stateless—all data generated on-demand
 
 ## Development Setup
 
@@ -38,9 +37,8 @@ Copy `.env.example` to `.env.local` and fill in values:
 cp .env.example .env.local
 ```
 
-Required for features:
-- `OPENROUTER_API_KEY` – LLM question generation
-- `POSTGRES_PRISMA_URL` (or `DATABASE_URL`) – Exam attempt tracking
+Required:
+- `OPENROUTER_API_KEY` – Get from [openrouter.ai/keys](https://openrouter.ai/keys) (free tier available)
 
 ### 3. Vercel Deployment (GitHub Integration)
 
@@ -50,13 +48,10 @@ Required for features:
 2. Click "New Project" → Select `gaurangjani/Microsoft-Exam-Sandbox`
 3. Leave build settings as defaults (Next.js auto-detected)
 4. Under "Environment Variables", add:
-   - `OPENROUTER_API_KEY` = (your OpenRouter key)
-   - `POSTGRES_PRISMA_URL` = (your Vercel Postgres or Supabase connection string)
-   - `NEXT_PUBLIC_APP_URL` = (your Vercel deployment URL, e.g., `https://exam-sim.vercel.app`)
-
+   - `OPENROUTER_API_KEY` = your key from openrouter.ai
 5. Click "Deploy"
 
-**After setup:** Every push to `main` auto-deploys. Feature branches are preview deployments.
+**After setup:** Every push to `main` auto-deploys. Feature branches create preview deployments.
 
 ---
 
