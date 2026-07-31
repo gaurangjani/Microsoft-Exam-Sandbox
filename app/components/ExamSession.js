@@ -409,20 +409,30 @@ export default function ExamSession({ exam, onComplete, onError }) {
 function ScoreReport({ exam, score, questions, answers }) {
   const scorePercentage = Math.round(score.scorePercentage);
 
-  // Calculate scores by skill area/category
+  // Calculate scores by skill area/category - only for questions actually answered
   const categoryScores = {};
-  questions.forEach((question, idx) => {
+
+  // Only count questions that exist in the questions array
+  for (let idx = 0; idx < questions.length; idx++) {
+    const question = questions[idx];
+    if (!question) continue;
+
     const category = question.skillArea || 'Uncategorized';
     if (!categoryScores[category]) {
       categoryScores[category] = { total: 0, correct: 0 };
     }
+
     categoryScores[category].total += 1;
-    if (score.results[idx]?.isCorrect) {
+
+    // Check if this question was answered correctly
+    if (score.results && score.results[idx] && score.results[idx].isCorrect) {
       categoryScores[category].correct += 1;
     }
-  });
+  }
 
-  const sortedCategories = Object.entries(categoryScores).sort((a, b) => b[1].correct - a[1].correct);
+  const sortedCategories = Object.entries(categoryScores)
+    .filter(([_, stats]) => stats.total > 0) // Only show categories with answered questions
+    .sort((a, b) => b[1].correct - a[1].correct);
 
   return (
     <div style={styles.container}>
