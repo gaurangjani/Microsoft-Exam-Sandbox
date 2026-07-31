@@ -1,3 +1,5 @@
+import './globals.css';
+
 export const metadata = {
   title: 'Microsoft Certification Exam Simulator',
   description: 'Practice Microsoft certification exams with live content from Microsoft Learn',
