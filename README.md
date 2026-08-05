@@ -37,9 +37,10 @@ npm run dev
 
 | Feature | Description |
 |---------|-------------|
-| 📚 **Live Exam Catalog** | 14 Microsoft certifications (Azure, Microsoft 365, Security, Data & AI) |
+| 📚 **40+ Microsoft Exams** | Dynamic catalog covering Azure, Security, Data & AI, Dynamics 365, Power Platform, Microsoft 365, and Agentic AI |
 | 🔍 **Searchable Selector** | Filter exams by code, title, or category |
-| 🤖 **AI-Generated Questions** | 100+ progressive questions per exam via OpenRouter LLM (smart batch loading) |
+| 🤖 **AI-Generated Questions** | 100+ progressive questions per exam via OpenRouter LLM (smart batch loading, curriculum-aligned) |
+| 📖 **Curriculum-Aligned** | Questions generated from official Microsoft Learn curriculum per exam family |
 | ⏱️ **Timed Sessions** | Realistic exam durations (45-120 minutes) per exam type |
 | 📋 **Realistic Formats** | Single/multi-select MCQ, true/false, scenario-based questions |
 | ✅ **Instant Scoring** | Pass/fail results (70% threshold, Microsoft standard) |
@@ -132,6 +133,7 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 
 | Document | Purpose |
 |----------|---------|
+| [CHANGELOG.md](./CHANGELOG.md) | Release notes and version history (v1.6.0 current) |
 | [DEPLOY_NOW.md](./DEPLOY_NOW.md) | ⭐ **Start here** - Quick deployment guide |
 | [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md) | Step-by-step Vercel setup with troubleshooting |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | API endpoints and configuration |
@@ -146,7 +148,7 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 ```
 1. User opens app
    ↓
-2. Exam selector loads (14 certifications, searchable)
+2. Exam selector loads (40+ certifications across 11 families, searchable)
    ↓
 3. User searches/filters and picks an exam
    ↓
@@ -197,30 +199,25 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 
 ---
 
-## 📋 Supported Exams (14 Total)
+## 📋 Supported Exams (40+ Total)
 
-### Azure (7)
-- AZ-900: Microsoft Azure Fundamentals
-- AZ-104: Azure Administrator
-- AZ-305: Designing Microsoft Azure Infrastructure Solutions
-- AZ-400: Designing and Implementing Microsoft DevOps Solutions
-- AZ-500: Microsoft Azure Security Engineer
-- AZ-700: Designing and Implementing Microsoft Azure Networking Solutions
-- AZ-720: Azure Support Engineer Specialist
+The app supports **40+ Microsoft certification exams** across 11 families:
 
-### Microsoft 365 (2)
-- MS-900: Microsoft 365 Fundamentals
-- MD-102: Manage Modern Desktops
+| Family | Exam Count | Examples |
+|--------|-----------|----------|
+| **Azure (AZ)** | 10+ | AZ-900, AZ-104, AZ-305, AZ-400, AZ-500, AZ-700, AZ-720 |
+| **Microsoft 365 (MS/MD)** | 5+ | MS-900, MD-102, MS-101, MS-102, MD-101 |
+| **Security (SC)** | 3+ | SC-900, SC-200, SC-100 |
+| **Data Platform (DP)** | 5+ | DP-900, DP-203, DP-100, DP-301, DP-500 |
+| **AI (AI)** | 3+ | AI-900, AI-100, AI-102 |
+| **Dynamics 365 (MB)** | 5+ | MB-300, MB-330, MB-500, MB-910, MB-920 |
+| **Power Platform (PL)** | 5+ | PL-100, PL-200, PL-400, PL-900, PL-200 |
+| **Power BI / Analytics (DA)** | 3+ | DA-100, DA-101 |
+| **Microsoft Fabric (FA)** | 2+ | FA-100, FA-200 |
+| **Agentic AI (AB)** | 3+ | AB-100, AB-730, AB-901 |
+| **Security Eng. (SC)** | 2+ | SC-100, SC-200 |
 
-### Security (2)
-- SC-900: Microsoft Security, Compliance, and Identity Fundamentals
-- SC-200: Microsoft Security Operations Analyst
-
-### Data & AI (3)
-- DP-900: Microsoft Azure Data Fundamentals
-- DP-203: Data Engineering on Microsoft Azure
-- AI-900: Microsoft Azure AI Fundamentals
-- AI-901: Microsoft Azure AI Fundamentals (additional)
+**Curriculum-Aligned:** Questions are generated from official Microsoft Learn curriculum specific to each exam family, ensuring relevance and accuracy.
 
 ---
 
@@ -301,14 +298,17 @@ git push origin main
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Core features | ✅ Complete | 14 exams, 100+ questions per exam |
+| Core features | ✅ Complete | 40+ exams, 100+ questions per exam |
+| Dynamic exam catalog | ✅ Complete | 11 exam families, curriculum-aligned |
+| Curriculum-aligned questions | ✅ Complete | Exam-family constraints prevent topic cross-contamination |
 | Progressive loading | ✅ Complete | Auto-batch loading as user progresses |
 | Dark/Light theme | ✅ Complete | Toggle + localStorage persistence |
 | Performance by category | ✅ Complete | Score breakdown by skill area |
 | Early exit option | ✅ Complete | End Exam button with confirmation |
 | Build/deployment | ✅ Verified | Auto-deploy on push via Vercel |
-| Documentation | ✅ Complete | README, API docs, deployment guides |
-| Production ready | ✅ YES | Live on Vercel |
+| Documentation | ✅ Complete | README, API docs, deployment guides, CHANGELOG |
+| Google Analytics | ✅ Integrated | Track usage metrics via NEXT_PUBLIC_GA_ID |
+| Production ready | ✅ YES | Live on Vercel (v1.6.0) |
 | Database | ❌ Not needed | Stateless architecture |
 | Rate limiting | ✅ Implemented | 25 req/min per IP |
 
