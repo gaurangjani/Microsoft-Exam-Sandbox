@@ -125,7 +125,7 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 
 **Auto-Deploy:** Every push to `main` or `Dev` auto-deploys instantly via Vercel's GitHub integration. No extra setup needed.
 
-📖 **For detailed instructions**, see [DEPLOY_NOW.md](./DEPLOY_NOW.md)
+📖 **For detailed instructions**, see [DEPLOY_NOW.md](./docs/DEPLOY_NOW.md)
 
 ---
 
@@ -133,11 +133,12 @@ OPENROUTER_MODEL=openai/gpt-3.5-turbo
 
 | Document | Purpose |
 |----------|---------|
-| [CHANGELOG.md](./CHANGELOG.md) | Release notes and version history (v1.6.0 current) |
-| [DEPLOY_NOW.md](./DEPLOY_NOW.md) | ⭐ **Start here** - Quick deployment guide |
-| [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md) | Step-by-step Vercel setup with troubleshooting |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | API endpoints and configuration |
-| [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) | Architecture and roadmap |
+| [CHANGELOG.md](./docs/CHANGELOG.md) | Release notes and version history (v1.0.0 current) |
+| [DEPLOY_NOW.md](./docs/DEPLOY_NOW.md) | ⭐ **Start here** - Quick deployment guide |
+| [VERCEL_DEPLOY.md](./docs/VERCEL_DEPLOY.md) | Step-by-step Vercel setup with troubleshooting |
+| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | API endpoints and configuration |
+| [PROJECT_SUMMARY.md](./docs/PROJECT_SUMMARY.md) | Architecture and roadmap |
+| [SECURITY.md](./docs/SECURITY.md) | Security & privacy implementation details |
 
 ---
 
@@ -360,10 +361,10 @@ MIT License - feel free to use and modify.
 
 ## 📞 Support
 
-- **Deployment help?** → See [DEPLOY_NOW.md](./DEPLOY_NOW.md)
-- **Questions?** → Check [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)
-- **Architecture?** → Read [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)
+- **Deployment help?** → See [DEPLOY_NOW.md](./docs/DEPLOY_NOW.md)
+- **Questions?** → Check [VERCEL_DEPLOY.md](./docs/VERCEL_DEPLOY.md)
+- **Architecture?** → Read [PROJECT_SUMMARY.md](./docs/PROJECT_SUMMARY.md)
 
 ---
 
-**Ready to deploy?** Start with [DEPLOY_NOW.md](./DEPLOY_NOW.md) 🚀
+**Ready to deploy?** Start with [DEPLOY_NOW.md](./docs/DEPLOY_NOW.md) 🚀
