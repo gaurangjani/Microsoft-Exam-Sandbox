@@ -39,10 +39,10 @@ export default function RootLayout({ children }) {
           </>
         )}
       </head>
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', margin: 0, padding: 0 }}>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <ThemeToggle />
-        <main style={{ flex: 1 }}>{children}</main>
+        <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '120px' }}>{children}</main>
         <Footer />
       </body>
     </html>

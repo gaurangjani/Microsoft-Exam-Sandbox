@@ -4,18 +4,22 @@ export default function Footer() {
   return (
     <footer
       style={{
-        marginTop: 'auto',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
         padding: '20px 40px',
         borderTop: '1px solid var(--border-color)',
         backgroundColor: 'var(--bg-surface-alt)',
         textAlign: 'center',
         fontSize: '13px',
         color: 'var(--text-secondary)',
+        zIndex: 100,
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <p style={{ margin: '0 0 8px 0' }}>
-          Microsoft Certification Exam Simulator
+          Microsoft Certification Exam Simulator v1.6.0
         </p>
         <p style={{ margin: '0' }}>
           Hosted on{' '}
