@@ -6,6 +6,9 @@ import Footer from './components/Footer';
 export const metadata = {
   title: 'Microsoft Certification Exam Simulator',
   description: 'Practice Microsoft certification exams with live content from Microsoft Learn',
+  icons: {
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="90" fill="%230078D4">📝</text></svg>',
+  },
 };
 
 const themeInit = `(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
