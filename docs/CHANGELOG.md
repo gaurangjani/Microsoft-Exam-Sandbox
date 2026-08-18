@@ -2,6 +2,23 @@
 
 All notable changes to the Microsoft Certification Exam Simulator are documented in this file.
 
+## [1.1.0] - 2025-08-18
+
+### Bug Fixes
+- **Fixed AB-731 JSON parsing error** - AB-731 exam now generates questions correctly with dynamic weight normalization
+- **Fixed weight normalization bug** - Auto-generated exam outlines now properly normalize skill weights to sum exactly 100% (prevents invalid outlines for exams without hardcoded data)
+- **Improved error logging** - Added detailed console logging to help troubleshoot LLM response issues
+
+### Improvements
+- **Fully Dynamic Exam Support** - Removed hardcoded AB-731 outline; now relies entirely on fixed weight normalization algorithm for dynamic behavior across all exams
+- **Better Debugging** - Enhanced logging shows outline structure and LLM response details for easier troubleshooting
+
+### Technical Changes
+- Weight calculation: Changed from hardcoded percentages to dynamic `Math.round(100 / skillCount)` with last-skill adjustment
+- Auto-generated outlines now guarantee weights sum to 100% regardless of skill count
+
+---
+
 ## [1.0.0] - 2025-08-05
 
 ### Initial Release
@@ -75,6 +92,6 @@ This is the first production release of the Microsoft Certification Exam Simulat
 ---
 
 **Status**: Production Ready ✅  
-**Latest Version**: v1.0.0  
-**Release Date**: August 5, 2025  
+**Latest Version**: v1.1.0  
+**Release Date**: August 18, 2025  
 **License**: MIT
