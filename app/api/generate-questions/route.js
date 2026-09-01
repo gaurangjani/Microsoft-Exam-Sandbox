@@ -4,7 +4,7 @@ import { getRateLimitStatus, getClientIp } from '@/lib/rate-limit';
 
 export const maxDuration = 40;
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 1;
 const TOTAL_QUESTIONS = 100;
 const TOTAL_BATCHES = Math.ceil(TOTAL_QUESTIONS / BATCH_SIZE);
 
