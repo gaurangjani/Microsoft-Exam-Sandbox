@@ -19,6 +19,7 @@ export async function GET(request) {
     .filter((m) => m?.pricing?.prompt === '0' && m?.pricing?.completion === '0')
     .filter((m) => m.id !== exclude)
     .filter((m) => !REASONING_ID_PATTERN.test(m.id))
+    .filter((m) => m?.architecture?.modality === 'text->text')
     .sort((a, b) => (b.context_length || 0) - (a.context_length || 0))
     .slice(0, 10)
     .map((m) => ({ id: m.id, context_length: m.context_length || null }));
